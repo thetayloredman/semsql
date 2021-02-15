@@ -1,0 +1,41 @@
+{
+    "name": "semsql",
+    "version": "0.0.0",
+    "description": "A semantic SQL syntax for JavaScript",
+    "main": "dist/index.js",
+    "scripts": {
+        "lint": "eslint .",
+        "build": "tsc",
+        "prettier:ci": "prettier .",
+        "prettier": "prettier . -w"
+    },
+    "author": "BadBoyHaloCat",
+    "license": "GPL-3.0-or-later",
+    "dependencies": {
+        "better-sqlite3": "^7.1.2"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^4.14.0",
+        "@typescript-eslint/parser": "^4.14.1",
+        "babel-eslint": "^10.1.0",
+        "eslint": "^7.20.0",
+        "eslint-config-prettier": "^7.2.0",
+        "husky": "^4.3.8",
+        "lint-staged": "^10.5.1",
+        "typescript": "^4.0.0",
+        "np": "^7.4.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*": [
+            "prettier -w"
+        ],
+        "**/*": [
+            "prettier -w"
+        ]
+    }
+}
