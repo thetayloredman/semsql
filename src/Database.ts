@@ -50,6 +50,7 @@ export default class Database {
                         const column = columns[i];
                         initStr += `"${column[0].replace(/"/g, '\\"')}" "${column[1].replace(/"/g, '\\"')}"`;
                         for (const option of columns.slice(2)) {
+                            // @ts-ignore
                             initStr += ` "${option.replace(/"/g, '\\"')}"`;
                         }
                         if (i !== columns.length - 1) {
