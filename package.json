@@ -8,7 +8,7 @@
         "build": "rm -r dist; tsc",
         "prettier:ci": "prettier .",
         "prettier": "prettier . -w",
-        "test": "yarn build; jest"
+        "test": "yarn build; yarn lint; jest"
     },
     "author": "BadBoyHaloCat",
     "license": "GPL-3.0-or-later",

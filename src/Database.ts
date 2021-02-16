@@ -18,7 +18,6 @@
  */
 
 import sqlite from 'better-sqlite3';
-import chalk from 'chalk';
 
 type DBColumnOptions = [string, ...string[]];
 
@@ -26,6 +25,14 @@ interface CREATEStatement {
     TABLE: (name: string) => CREATE_TABLECaller;
 }
 type CREATE_TABLECaller = (...columns: DBColumnOptions[]) => void;
+
+interface INSERTStatement {
+    INTO: (name: string) => { VALUES: INSERT_INTOCaller };
+    // TODO: add INSERT OR REPLACE INTO
+}
+type INSERT_INTOCaller = (params: any[]) => void;
+
+type SELECT_FROMStatement = { FROM: (table: string) => { [column: string]: any } };
 
 export default class Database {
     public constructor(dbFile = './data/semsql.db') {
@@ -35,32 +42,49 @@ export default class Database {
         // init props of non-callables
         this.CREATE = {
             TABLE: (name: string) => {
-                // TODO: only need trustQuery on unsafe queries (those that contain characters that can escape the SQL query)
-                // yes, this is a sql injection possibility, hence we look at globalThis.__semsql__safeQuery.
                 return (...columns: DBColumnOptions[]) => {
-                    // @ts-ignore
-                    if (global.__semsql__safeQuery) {
-                        // parse columns
-                        let initStr = `CREATE TABLE '${name}' (`;
+                    // parse columns
+                    let initStr = `CREATE TABLE "${name.replace(/"/g, '\\"')}" (`;
 
-                        for (let i = 0; i < columns.length; i++) {
-                            const column = columns[i];
-                            initStr += `${column[0]} ${column[1]}`;
-                            for (const option of columns.slice(2)) {
-                                initStr += ` ${option}`;
-                            }
-                            if (i !== columns.length - 1) {
-                                // avoid trailing commas
-                                initStr += ',';
+                    for (let i = 0; i < columns.length; i++) {
+                        const column = columns[i];
+                        initStr += `"${column[0].replace(/"/g, '\\"')}" "${column[1].replace(/"/g, '\\"')}"`;
+                        for (const option of columns.slice(2)) {
+                            initStr += ` "${option.replace(/"/g, '\\"')}"`;
+                        }
+                        if (i !== columns.length - 1) {
+                            // avoid trailing commas
+                            initStr += ',';
+                        }
+                    }
+
+                    initStr += ');';
+                    this.db.exec(initStr);
+                };
+            }
+        };
+        this.INSERT = {
+            INTO: (name: string) => {
+                return {
+                    // TODO: allow many values inserted at once
+                    VALUES: (params: any[]) => {
+                        let queryStr = `INSERT INTO "${name.replace(/"/g, '\\"')}" VALUES (`;
+                        const queryParams = [];
+
+                        for (let i = 0; i < params.length; i++) {
+                            const param = params[i];
+
+                            queryStr += '?';
+                            queryParams.push(param);
+
+                            if (i !== params.length - 1) {
+                                queryStr += ',';
                             }
                         }
 
-                        initStr += ');';
-                        this.db.exec(initStr);
-                    } else {
-                        throw new Error(
-                            'Attempt to call CREATE TABLE without a trust intent. In order to use CREATE TABLE, you need to wrap the function call in <db>.trustQuery(). This is to prevent SQL injections. Code passed into CREATE TABLE cannot be parameterized and can be injected.'
-                        );
+                        queryStr += ');';
+
+                        this.db.prepare(queryStr).run(queryParams);
                     }
                 };
             }
@@ -70,14 +94,25 @@ export default class Database {
     public file: string;
     public db: sqlite.Database;
 
-    public trustQuery(fn: (...params: any[]) => any): any {
-        // @ts-ignore
-        global.__semsql__safeQuery = true;
-        fn();
-        // @ts-ignore
-        global.__semsql__safeQuery = false;
-    }
-
     // non-callables
     public CREATE: CREATEStatement;
+    public INSERT: INSERTStatement;
+
+    // callables
+    public SELECT(...columns: string[]): SELECT_FROMStatement {
+        columns = columns.map((c) => c.replace(/"/g, '\\"'));
+
+        return {
+            // TODO: inner joins, WHERE clauses, etc
+            FROM: (table: string) => {
+                if (columns.length === 1 && columns[0] === '*') {
+                    return this.db.prepare(`SELECT * FROM "${table.replace(/"/g, '\\"')}"`).all();
+                } else if (columns.includes('*')) {
+                    throw new Error('Special column "*" cannot be used in a union call. Use "*" on it\'s own.');
+                } else {
+                    return this.db.prepare(`SELECT "${columns.join('","')}" FROM "${table.replace(/"/g, '\\"')}"`).all();
+                }
+            }
+        };
+    }
 }

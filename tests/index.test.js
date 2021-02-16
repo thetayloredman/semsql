@@ -19,30 +19,50 @@
 const semsql = require('../dist/index').default;
 const fs = require('fs');
 
-try {
-    fs.rmSync('./tests/tests-db.db');
-} catch (e) {}
+afterAll(() => {
+    try {
+        fs.rmSync('./tests/tests-db.db');
+    } catch (e) {}
+});
 
 const db = new semsql('./tests/tests-db.db');
 
 describe('CREATE', () => {
     describe('TABLE', () => {
-        it('complains about running without a trust intent', () => {
-            expect(() => db.CREATE.TABLE('test')(['foo', 'TEXT', 'NOT NULL'])).toThrow(
-                new Error(
-                    'Attempt to call CREATE TABLE without a trust intent. In order to use CREATE TABLE, you need to wrap the function call in <db>.trustQuery(). This is to prevent SQL injections. Code passed into CREATE TABLE cannot be parameterized and can be injected.'
-                )
-            );
-        });
         it('can create with 1 column', () => {
-            db.trustQuery(() => {
-                db.CREATE.TABLE('test2')(['foo', 'TEXT', 'NOT NULL']);
-            });
+            db.CREATE.TABLE('test2')(['foo', 'TEXT', 'NOT NULL']);
         });
         it('can create with 2 columns', () => {
-            db.trustQuery(() => {
-                db.CREATE.TABLE('test3')(['foo', 'TEXT', 'NOT NULL'], ['bar', 'TEXT']);
-            });
+            db.CREATE.TABLE('test3')(['foo', 'TEXT', 'NOT NULL'], ['bar', 'TEXT']);
+        });
+    });
+});
+
+describe('INSERT', () => {
+    describe('INTO', () => {
+        it('can insert 1 value', () => {
+            db.INSERT.INTO('test2').VALUES(['hello']);
+        });
+        it('can insert 2 values', () => {
+            db.INSERT.INTO('test3').VALUES(['hello', 'world']);
+        });
+    });
+});
+
+describe('SELECT', () => {
+    describe('*', () => {
+        it('works', () => {
+            expect(db.SELECT('*').FROM('test3')).toEqual([{ foo: 'hello', bar: 'world' }]);
+        });
+    });
+    describe('single column', () => {
+        it('works', () => {
+            expect(db.SELECT('foo').FROM('test3')).toEqual([{ foo: 'hello' }]);
+        });
+    });
+    describe('many columns', () => {
+        it('works', () => {
+            expect(db.SELECT('foo', 'bar').FROM('test3')).toEqual([{ foo: 'hello', bar: 'world' }]);
         });
     });
 });
