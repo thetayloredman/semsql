@@ -183,21 +183,181 @@ describe('SELECT', () => {
             expect(db.SELECT('*').FROM('DOUBLE_NOATTR_TEXT')).toEqual([{ text1: 'Hello, World!', text2: 'Hello, Second Column!' }]);
         });
         describe('WHERE clause', () => {
-            it('prep', () => {
-                db.CREATE.TABLE('SELECT_ALL_WHERE')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([1, 'hello world 1']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([2, 'hello world 2']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([3, 'hello world 3']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([4, 'hello world 4']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([5, 'hello world 5']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([6, 'hello world 6']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([7, 'hello world 7']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([8, 'hello world 8']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([9, 'hello world 9']);
-                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([10, 'hello world 10']);
+            describe('one WHERE clause', () => {
+                it('prep', () => {
+                    db.CREATE.TABLE('SELECT_ALL_WHERE')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([1, 'hello world 1']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([2, 'hello world 2']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([3, 'hello world 3']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([4, 'hello world 4']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([5, 'hello world 5']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([6, 'hello world 6']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([7, 'hello world 7']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([8, 'hello world 8']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([9, 'hello world 9']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([10, 'hello world 10']);
+                });
+                it('=', () => {
+                    expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '=', 1]] })).toEqual([{ id: 1, data: 'hello world 1' }]);
+                });
+                it('!=', () => {
+                    expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '!=', 1]] })).toEqual([
+                        { id: 2, data: 'hello world 2' },
+                        { id: 3, data: 'hello world 3' },
+                        { id: 4, data: 'hello world 4' },
+                        { id: 5, data: 'hello world 5' },
+                        { id: 6, data: 'hello world 6' },
+                        { id: 7, data: 'hello world 7' },
+                        { id: 8, data: 'hello world 8' },
+                        { id: 9, data: 'hello world 9' },
+                        { id: 10, data: 'hello world 10' }
+                    ]);
+                });
+                it('>', () => {
+                    expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '>', 5]] })).toEqual([
+                        { id: 6, data: 'hello world 6' },
+                        { id: 7, data: 'hello world 7' },
+                        { id: 8, data: 'hello world 8' },
+                        { id: 9, data: 'hello world 9' },
+                        { id: 10, data: 'hello world 10' }
+                    ]);
+                });
+                it('>=', () => {
+                    expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '>=', 5]] })).toEqual([
+                        { id: 5, data: 'hello world 5' },
+                        { id: 6, data: 'hello world 6' },
+                        { id: 7, data: 'hello world 7' },
+                        { id: 8, data: 'hello world 8' },
+                        { id: 9, data: 'hello world 9' },
+                        { id: 10, data: 'hello world 10' }
+                    ]);
+                });
+                it('<', () => {
+                    expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '<', 5]] })).toEqual([
+                        { id: 1, data: 'hello world 1' },
+                        { id: 2, data: 'hello world 2' },
+                        { id: 3, data: 'hello world 3' },
+                        { id: 4, data: 'hello world 4' }
+                    ]);
+                });
+                it('<=', () => {
+                    expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '<=', 5]] })).toEqual([
+                        { id: 1, data: 'hello world 1' },
+                        { id: 2, data: 'hello world 2' },
+                        { id: 3, data: 'hello world 3' },
+                        { id: 4, data: 'hello world 4' },
+                        { id: 5, data: 'hello world 5' }
+                    ]);
+                });
             });
-            it('works', () => {
-                expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '=', 1]] })).toEqual([{ id: 1, data: 'hello world 1' }]);
+            describe('with AND clause', () => {
+                it('prep', () => {
+                    db.CREATE.TABLE('SELECT_ALL_WHERE_AND')(['id', 'INT', 'PRIMARY KEY'], ['id2', 'INT', 'NOT NULL'], ['data', 'TEXT', 'NOT NULL']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([1, 1, 'hello world 1']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([2, 2, 'hello world 2']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([3, 3, 'hello world 3']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([4, 4, 'hello world 4']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([5, 5, 'hello world 5']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([6, 6, 'hello world 6']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([7, 7, 'hello world 7']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([8, 8, 'hello world 8']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([9, 9, 'hello world 9']);
+                    db.INSERT.INTO('SELECT_ALL_WHERE_AND').VALUES([10, 10, 'hello world 10']);
+                });
+                it('=', () => {
+                    expect(
+                        db.SELECT('*').FROM('SELECT_ALL_WHERE_AND', {
+                            WHERE: [
+                                ['id', '=', 1],
+                                ['id2', '=', 1]
+                            ]
+                        })
+                    ).toEqual([{ id: 1, id2: 1, data: 'hello world 1' }]);
+                });
+                it('!=', () => {
+                    expect(
+                        db.SELECT('*').FROM('SELECT_ALL_WHERE_AND', {
+                            WHERE: [
+                                ['id', '!=', 1],
+                                ['id2', '!=', 1]
+                            ]
+                        })
+                    ).toEqual([
+                        { id: 2, id2: 2, data: 'hello world 2' },
+                        { id: 3, id2: 3, data: 'hello world 3' },
+                        { id: 4, id2: 4, data: 'hello world 4' },
+                        { id: 5, id2: 5, data: 'hello world 5' },
+                        { id: 6, id2: 6, data: 'hello world 6' },
+                        { id: 7, id2: 7, data: 'hello world 7' },
+                        { id: 8, id2: 8, data: 'hello world 8' },
+                        { id: 9, id2: 9, data: 'hello world 9' },
+                        { id: 10, id2: 10, data: 'hello world 10' }
+                    ]);
+                });
+                it('>', () => {
+                    expect(
+                        db.SELECT('*').FROM('SELECT_ALL_WHERE_AND', {
+                            WHERE: [
+                                ['id', '>', 5],
+                                ['id2', '>', 5]
+                            ]
+                        })
+                    ).toEqual([
+                        { id: 6, id2: 6, data: 'hello world 6' },
+                        { id: 7, id2: 7, data: 'hello world 7' },
+                        { id: 8, id2: 8, data: 'hello world 8' },
+                        { id: 9, id2: 9, data: 'hello world 9' },
+                        { id: 10, id2: 10, data: 'hello world 10' }
+                    ]);
+                });
+                it('>=', () => {
+                    expect(
+                        db.SELECT('*').FROM('SELECT_ALL_WHERE_AND', {
+                            WHERE: [
+                                ['id', '>=', 5],
+                                ['id2', '>=', 5]
+                            ]
+                        })
+                    ).toEqual([
+                        { id: 5, id2: 5, data: 'hello world 5' },
+                        { id: 6, id2: 6, data: 'hello world 6' },
+                        { id: 7, id2: 7, data: 'hello world 7' },
+                        { id: 8, id2: 8, data: 'hello world 8' },
+                        { id: 9, id2: 9, data: 'hello world 9' },
+                        { id: 10, id2: 10, data: 'hello world 10' }
+                    ]);
+                });
+                it('<', () => {
+                    expect(
+                        db.SELECT('*').FROM('SELECT_ALL_WHERE_AND', {
+                            WHERE: [
+                                ['id', '<', 5],
+                                ['id2', '<', 5]
+                            ]
+                        })
+                    ).toEqual([
+                        { id: 1, id2: 1, data: 'hello world 1' },
+                        { id: 2, id2: 2, data: 'hello world 2' },
+                        { id: 3, id2: 3, data: 'hello world 3' },
+                        { id: 4, id2: 4, data: 'hello world 4' }
+                    ]);
+                });
+                it('<=', () => {
+                    expect(
+                        db.SELECT('*').FROM('SELECT_ALL_WHERE_AND', {
+                            WHERE: [
+                                ['id', '<=', 5],
+                                ['id2', '<=', 5]
+                            ]
+                        })
+                    ).toEqual([
+                        { id: 1, id2: 1, data: 'hello world 1' },
+                        { id: 2, id2: 2, data: 'hello world 2' },
+                        { id: 3, id2: 3, data: 'hello world 3' },
+                        { id: 4, id2: 4, data: 'hello world 4' },
+                        { id: 5, id2: 5, data: 'hello world 5' }
+                    ]);
+                });
             });
         });
     });

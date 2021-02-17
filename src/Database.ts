@@ -106,7 +106,8 @@ export default class Database {
         columns = columns.map((c) => this._sanitize(c));
 
         return {
-            // TODO: inner joins, WHERE clauses, etc
+            // TODO: joins
+            // TODO: where clauses which aren't just "AND", e.g. WHERE foo = 2 OR bar = 3
             FROM: (table: string, whereCall?: { WHERE: [string, '=' | '!=' | '>' | '>=' | '<' | '<=', any][] }) => {
                 if (columns.length === 1 && columns[0] === '*') {
                     if (!whereCall?.WHERE || whereCall?.WHERE?.length === 0) {
