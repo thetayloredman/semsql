@@ -29,40 +29,176 @@ const db = new semsql('./tests/tests-db.db');
 
 describe('CREATE', () => {
     describe('TABLE', () => {
-        it('can create with 1 column', () => {
-            db.CREATE.TABLE('test2')(['foo', 'TEXT', 'NOT NULL']);
+        describe('single column', () => {
+            describe('no extra attributes', () => {
+                it('TEXT', () => {
+                    db.CREATE.TABLE('SINGLE_NOATTR_TEXT')(['text', 'TEXT']);
+                });
+                it('INT', () => {
+                    db.CREATE.TABLE('SINGLE_NOATTR_INT')(['int', 'INT']);
+                });
+                it('CHAR', () => {
+                    db.CREATE.TABLE('SINGLE_NOATTR_CHAR')(['char', 'CHAR']);
+                });
+            });
+            describe('with PRIMARY KEY attribute', () => {
+                it('TEXT(10)', () => {
+                    db.CREATE.TABLE('SINGLE_PRIMARY_TEXT10')(['text', 'TEXT(10)', 'PRIMARY KEY']);
+                });
+                it('INT', () => {
+                    db.CREATE.TABLE('SINGLE_PRIMARY_INT')(['int', 'INT', 'PRIMARY KEY']);
+                });
+                it('CHAR', () => {
+                    db.CREATE.TABLE('SINGLE_PRIMARY_CHAR')(['char', 'CHAR', 'PRIMARY KEY']);
+                });
+            });
+            describe('with NOT NULL attribute', () => {
+                it('TEXT(10)', () => {
+                    db.CREATE.TABLE('SINGLE_NOTNULL_TEXT')(['text', 'TEXT', 'NOT NULL']);
+                });
+                it('INT', () => {
+                    db.CREATE.TABLE('SINGLE_NOTNULL_INT')(['int', 'INT', 'NOT NULL']);
+                });
+                it('CHAR', () => {
+                    db.CREATE.TABLE('SINGLE_NOTNULL_CHAR')(['char', 'CHAR', 'NOT NULL']);
+                });
+            });
         });
-        it('can create with 2 columns', () => {
-            db.CREATE.TABLE('test3')(['foo', 'TEXT', 'NOT NULL'], ['bar', 'TEXT']);
+        describe('two columns', () => {
+            describe('no extra attributes', () => {
+                it('TEXT', () => {
+                    db.CREATE.TABLE('DOUBLE_NOATTR_TEXT')(['text1', 'TEXT'], ['text2', 'TEXT']);
+                });
+                it('INT', () => {
+                    db.CREATE.TABLE('DOUBLE_NOATTR_INT')(['int1', 'INT'], ['int2', 'INT']);
+                });
+                it('CHAR', () => {
+                    db.CREATE.TABLE('DOUBLE_NOATTR_CHAR')(['char1', 'CHAR'], ['char2', 'CHAR']);
+                });
+            });
+            describe('with one PRIMARY KEY attribute', () => {
+                it('TEXT(10)', () => {
+                    db.CREATE.TABLE('DOUBLE_PRIMARY_TEXT10')(['text1', 'TEXT(10)', 'PRIMARY KEY'], ['text2', 'TEXT']);
+                });
+                it('INT', () => {
+                    db.CREATE.TABLE('DOUBLE_PRIMARY_INT')(['int1', 'INT', 'PRIMARY KEY'], ['int2', 'INT']);
+                });
+                it('CHAR', () => {
+                    db.CREATE.TABLE('DOUBLE_PRIMARY_CHAR')(['char1', 'CHAR', 'PRIMARY KEY'], ['char2', 'CHAR']);
+                });
+            });
+            describe('with all NOT NULL attributes', () => {
+                it('TEXT', () => {
+                    db.CREATE.TABLE('DOUBLE_NOTNULL_TEXT')(['text1', 'TEXT', 'NOT NULL'], ['text2', 'TEXT', 'NOT NULL']);
+                });
+                it('INT', () => {
+                    db.CREATE.TABLE('DOUBLE_NOTNULL_INT')(['int1', 'INT', 'NOT NULL'], ['int2', 'INT', 'NOT NULL']);
+                });
+                it('CHAR', () => {
+                    db.CREATE.TABLE('DOUBLE_NOTNULL_CHAR')(['char1', 'CHAR', 'NOT NULL'], ['char2', 'CHAR', 'NOT NULL']);
+                });
+            });
         });
     });
 });
 
 describe('INSERT', () => {
     describe('INTO', () => {
-        it('can insert 1 value', () => {
-            db.INSERT.INTO('test2').VALUES(['hello']);
+        describe('single column', () => {
+            describe('no extra attributes', () => {
+                it('TEXT', () => {
+                    db.INSERT.INTO('SINGLE_NOATTR_TEXT').VALUES(['Hello, World!']);
+                });
+                it('INT', () => {
+                    db.INSERT.INTO('SINGLE_NOATTR_INT').VALUES([13]);
+                });
+                it('CHAR', () => {
+                    db.INSERT.INTO('SINGLE_NOATTR_CHAR').VALUES(['e']);
+                });
+            });
+            describe('with PRIMARY KEY attribute', () => {
+                it('TEXT(10)', () => {
+                    db.INSERT.INTO('SINGLE_PRIMARY_TEXT10').VALUES(['helloworld']);
+                });
+                it('INT', () => {
+                    db.INSERT.INTO('SINGLE_PRIMARY_INT').VALUES([13]);
+                });
+                it('CHAR', () => {
+                    db.INSERT.INTO('SINGLE_PRIMARY_CHAR').VALUES(['e']);
+                });
+            });
+            describe('with NOT NULL attribute', () => {
+                it('TEXT(10)', () => {
+                    db.INSERT.INTO('SINGLE_NOTNULL_TEXT').VALUES(['helloworld']);
+                });
+                it('INT', () => {
+                    db.INSERT.INTO('SINGLE_NOTNULL_INT').VALUES([13]);
+                });
+                it('CHAR', () => {
+                    db.INSERT.INTO('SINGLE_NOTNULL_CHAR').VALUES(['e']);
+                });
+            });
         });
-        it('can insert 2 values', () => {
-            db.INSERT.INTO('test3').VALUES(['hello', 'world']);
+        describe('two columns', () => {
+            describe('no extra attributes', () => {
+                it('TEXT', () => {
+                    db.INSERT.INTO('DOUBLE_NOATTR_TEXT').VALUES(['Hello, World!', 'Hello, Second Column!']);
+                });
+                it('INT', () => {
+                    db.INSERT.INTO('DOUBLE_NOATTR_INT').VALUES([13, 5]);
+                });
+                it('CHAR', () => {
+                    db.INSERT.INTO('DOUBLE_NOATTR_CHAR').VALUES(['e', 'f']);
+                });
+            });
+            describe('with PRIMARY KEY attribute', () => {
+                it('TEXT(10)', () => {
+                    db.INSERT.INTO('DOUBLE_PRIMARY_TEXT10').VALUES(['helloworld', 'bye_world!']);
+                });
+                it('INT', () => {
+                    db.INSERT.INTO('DOUBLE_PRIMARY_INT').VALUES([13, 5]);
+                });
+                it('CHAR', () => {
+                    db.INSERT.INTO('DOUBLE_PRIMARY_CHAR').VALUES(['e', 'f']);
+                });
+            });
+            describe('with NOT NULL attribute', () => {
+                it('TEXT(10)', () => {
+                    db.INSERT.INTO('DOUBLE_NOTNULL_TEXT').VALUES(['Hello, World!', 'Hello, Second Column!']);
+                });
+                it('INT', () => {
+                    db.INSERT.INTO('DOUBLE_NOTNULL_INT').VALUES([13, 5]);
+                });
+                it('CHAR', () => {
+                    db.INSERT.INTO('DOUBLE_NOTNULL_CHAR').VALUES(['e', 'f']);
+                });
+            });
         });
     });
 });
 
 describe('SELECT', () => {
     describe('*', () => {
-        it('works', () => {
-            expect(db.SELECT('*').FROM('test3')).toEqual([{ foo: 'hello', bar: 'world' }]);
+        it('all values are returned', () => {
+            expect(db.SELECT('*').FROM('DOUBLE_NOATTR_TEXT')).toEqual([{ text1: 'Hello, World!', text2: 'Hello, Second Column!' }]);
         });
-    });
-    describe('single column', () => {
-        it('works', () => {
-            expect(db.SELECT('foo').FROM('test3')).toEqual([{ foo: 'hello' }]);
-        });
-    });
-    describe('many columns', () => {
-        it('works', () => {
-            expect(db.SELECT('foo', 'bar').FROM('test3')).toEqual([{ foo: 'hello', bar: 'world' }]);
+        describe('WHERE clause', () => {
+            it('prep', () => {
+                db.CREATE.TABLE('SELECT_ALL_WHERE')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([1, 'hello world 1']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([2, 'hello world 2']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([3, 'hello world 3']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([4, 'hello world 4']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([5, 'hello world 5']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([6, 'hello world 6']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([7, 'hello world 7']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([8, 'hello world 8']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([9, 'hello world 9']);
+                db.INSERT.INTO('SELECT_ALL_WHERE').VALUES([10, 'hello world 10']);
+            });
+            it('works', () => {
+                expect(db.SELECT('*').FROM('SELECT_ALL_WHERE', { WHERE: [['id', '=', 1]] })).toEqual([{ id: 1, data: 'hello world 1' }]);
+            });
         });
     });
 });

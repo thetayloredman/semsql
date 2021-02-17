@@ -32,7 +32,9 @@ interface INSERTStatement {
 }
 type INSERT_INTOCaller = (params: any[]) => void;
 
-type SELECT_FROMStatement = { FROM: (table: string) => { [column: string]: any } };
+type SELECT_FROMStatement = {
+    FROM: (table: string, whereCall?: { WHERE: [string, '=' | '!=' | '>' | '>=' | '<' | '<=', any][] }) => { [column: string]: any };
+};
 
 export default class Database {
     public constructor(dbFile = './data/semsql.db') {
@@ -44,14 +46,13 @@ export default class Database {
             TABLE: (name: string) => {
                 return (...columns: DBColumnOptions[]) => {
                     // parse columns
-                    let initStr = `CREATE TABLE "${name.replace(/"/g, '\\"')}" (`;
+                    let initStr = `CREATE TABLE "${this._sanitize(name)}" (`;
 
                     for (let i = 0; i < columns.length; i++) {
                         const column = columns[i];
-                        initStr += `"${column[0].replace(/"/g, '\\"')}" "${column[1].replace(/"/g, '\\"')}"`;
-                        for (const option of columns.slice(2)) {
-                            // @ts-ignore
-                            initStr += ` "${option.replace(/"/g, '\\"')}"`;
+                        initStr += `"${this._sanitize(column[0])}" "${this._sanitize(column[1])}"`;
+                        for (const option of column.slice(2)) {
+                            initStr += ` "${this._sanitize(option)}"`;
                         }
                         if (i !== columns.length - 1) {
                             // avoid trailing commas
@@ -65,11 +66,12 @@ export default class Database {
             }
         };
         this.INSERT = {
+            // TODO: INSERT OR REPLACE INTO
             INTO: (name: string) => {
                 return {
                     // TODO: allow many values inserted at once
                     VALUES: (params: any[]) => {
-                        let queryStr = `INSERT INTO "${name.replace(/"/g, '\\"')}" VALUES (`;
+                        let queryStr = `INSERT INTO "${this._sanitize(name)}" VALUES (`;
                         const queryParams = [];
 
                         for (let i = 0; i < params.length; i++) {
@@ -101,19 +103,59 @@ export default class Database {
 
     // callables
     public SELECT(...columns: string[]): SELECT_FROMStatement {
-        columns = columns.map((c) => c.replace(/"/g, '\\"'));
+        columns = columns.map((c) => this._sanitize(c));
 
         return {
             // TODO: inner joins, WHERE clauses, etc
-            FROM: (table: string) => {
+            FROM: (table: string, whereCall?: { WHERE: [string, '=' | '!=' | '>' | '>=' | '<' | '<=', any][] }) => {
                 if (columns.length === 1 && columns[0] === '*') {
-                    return this.db.prepare(`SELECT * FROM "${table.replace(/"/g, '\\"')}"`).all();
+                    if (!whereCall?.WHERE || whereCall?.WHERE?.length === 0) {
+                        return this.db.prepare(`SELECT * FROM "${this._sanitize(table)}"`).all();
+                    } else {
+                        for (const c of whereCall.WHERE) {
+                            // ensure only authorized operators
+                            if (!['=', '!=', '>', '>=', '<', '<='].includes(c[1])) {
+                                throw new Error('Invalid SQL match operator.');
+                            }
+                        }
+
+                        let whereTxt = `WHERE "${this._sanitize(whereCall.WHERE[0][0])}" ${whereCall.WHERE[0][1]} ?`;
+                        const queryParams = [whereCall.WHERE[0][2]];
+                        for (const call of whereCall.WHERE) {
+                            whereTxt += ` AND "${this._sanitize(call[0])}" ${call[1]} ?`;
+                            queryParams.push(call[2]);
+                        }
+
+                        return this.db.prepare(`SELECT * FROM "${this._sanitize(table)}" ${whereTxt}`).all(queryParams);
+                    }
                 } else if (columns.includes('*')) {
                     throw new Error('Special column "*" cannot be used in a union call. Use "*" on it\'s own.');
                 } else {
-                    return this.db.prepare(`SELECT "${columns.join('","')}" FROM "${table.replace(/"/g, '\\"')}"`).all();
+                    if (!whereCall?.WHERE || whereCall?.WHERE?.length === 0) {
+                        return this.db.prepare(`SELECT "${columns.join('","')}" FROM "${this._sanitize(table)}"`).all();
+                    } else {
+                        for (const c of whereCall.WHERE) {
+                            // ensure only authorized operators
+                            if (!['=', '!=', '>', '>=', '<', '<='].includes(c[1])) {
+                                throw new Error('Invalid SQL match operator.');
+                            }
+                        }
+
+                        let whereTxt = `WHERE "${whereCall.WHERE[0][0].replace(/"/g, '\\"')}" ${whereCall.WHERE[0][1]} ?`;
+                        const queryParams = [whereCall.WHERE[0][2]];
+                        for (const call of whereCall.WHERE) {
+                            whereTxt += ` AND "${this._sanitize(call[0])}" ${call[1]} ?`;
+                            queryParams.push(call[2]);
+                        }
+
+                        return this.db.prepare(`SELECT "${columns.join('","')}" FROM "${this._sanitize(table)}" ${whereTxt}`).all(queryParams);
+                    }
                 }
             }
         };
+    }
+
+    private _sanitize(sql: string): string {
+        return sql.replace(/"/g, '\\"');
     }
 }
