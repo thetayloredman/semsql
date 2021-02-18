@@ -152,7 +152,7 @@ export default class Database {
                             }
                         }
 
-                        let whereTxt = `WHERE "${whereCall.WHERE[0][0].replace(/"/g, '\\"')}" ${whereCall.WHERE[0][1]} ?`;
+                        let whereTxt = `WHERE "${this._sanitize(whereCall.WHERE[0][0])}" ${whereCall.WHERE[0][1]} ?`;
                         const queryParams = [whereCall.WHERE[0][2]];
                         for (const call of whereCall.WHERE) {
                             whereTxt += ` AND "${this._sanitize(call[0])}" ${call[1]} ?`;
