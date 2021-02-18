@@ -36,6 +36,10 @@ type SELECT_FROMStatement = {
     FROM: (table: string, whereCall?: { WHERE: [string, '=' | '!=' | '>' | '>=' | '<' | '<=', any][] }) => { [column: string]: any };
 };
 
+interface DROPStatement {
+    TABLE: (name: string) => void;
+}
+
 export default class Database {
     public constructor(dbFile = './data/semsql.db') {
         this.file = dbFile;
@@ -92,6 +96,11 @@ export default class Database {
                 };
             }
         };
+        this.DROP = {
+            TABLE: (name: string) => {
+                this.db.exec(`DROP TABLE "${this._sanitize(name)}";`);
+            }
+        };
     }
 
     public file: string;
@@ -100,6 +109,7 @@ export default class Database {
     // non-callables
     public CREATE: CREATEStatement;
     public INSERT: INSERTStatement;
+    public DROP: DROPStatement;
 
     // callables
     public SELECT(...columns: string[]): SELECT_FROMStatement {

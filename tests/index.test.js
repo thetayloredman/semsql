@@ -362,3 +362,14 @@ describe('SELECT', () => {
         });
     });
 });
+
+describe('DROP', () => {
+    describe('TABLE', () => {
+        it('prep', () => {
+            db.CREATE.TABLE('DROP_TABLE')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
+        });
+        it('works', () => {
+            db.DROP.TABLE('DROP_TABLE');
+        });
+    });
+});
