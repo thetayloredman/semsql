@@ -166,6 +166,13 @@ export default class Database {
         };
     }
 
+    // critical function responsible for sanitizing sql strings.
+    //
+    // _sanitize is used where parameterized content cannot
+    // (table names and column names)
+    //
+    // If a security vulnerability is found, this function is usually
+    // the one responsible.
     private _sanitize(sql: string): string {
         return sql.replace(/"/g, '\\"');
     }
