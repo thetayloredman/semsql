@@ -123,7 +123,10 @@ Accessed by `db.DROP`.
 
 #### TABLE
 
-**Warning:** Data loss can be caused!
+> **Warning:**
+> This function can cause data loss!
+> (Deletes tables)
+> Use at your own risk!
 
 Delete a table and all of it's data.
 
