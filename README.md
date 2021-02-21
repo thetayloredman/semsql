@@ -18,7 +18,7 @@ db.CREATE.TABLE('foo')(['COL1', 'TEXT', 'NOT NULL']);
     -   [`INTO`](#query:INSERT:INTO) (implemented in v0.1.0)
 -   [`SELECT ... FROM`](#query:SELECT_FROM) (implemented in v0.1.0)
 -   [`DROP`](#query:DROP)
-    -   [`TABLE`](#queryDROPTABLE) (implemented in v0.1.0)
+    -   [`TABLE`](#query>DROP>TABLE) (implemented in v0.1.0)
 
 ## Queries
 
