@@ -373,3 +373,5 @@ describe('DROP', () => {
         });
     });
 });
+
+// TODO: tests for BEGIN/BEGIN TRANSACTION, REVERT, and COMMIT

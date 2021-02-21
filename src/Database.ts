@@ -40,6 +40,11 @@ interface DROPStatement {
     TABLE: (name: string) => void;
 }
 
+interface BEGINStatement {
+    (): void;
+    TRANSACTION: () => void;
+}
+
 export default class Database {
     public constructor(dbFile = './data/semsql.db') {
         this.file = dbFile;
@@ -100,6 +105,14 @@ export default class Database {
             TABLE: (name: string) => {
                 this.db.exec(`DROP TABLE "${this._sanitize(name)}";`);
             }
+        };
+        // TODO: fix ts error
+        // @ts-ignore
+        this.BEGIN = () => {
+            this.db.exec('BEGIN TRANSACTION;');
+        };
+        this.BEGIN.TRANSACTION = () => {
+            this.db.exec('BEGIN TRANSACTION;');
         };
     }
 
@@ -164,6 +177,14 @@ export default class Database {
                 }
             }
         };
+    }
+    // BEGIN
+    public BEGIN: BEGINStatement;
+    public REVERT(): void {
+        this.db.exec('REVERT;');
+    }
+    public COMMIT(): void {
+        this.db.exec('COMMIT;');
     }
 
     // critical function responsible for sanitizing sql strings.
