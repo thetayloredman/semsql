@@ -12,6 +12,10 @@ db.CREATE.TABLE('foo')(['COL1', 'TEXT', 'NOT NULL']);
 
 ## All Supported Queries
 
+> **Note:**
+> If you are viewing this from [the npm package listing](https://npmjs.com/package/semsql), you should switch to our [GitHub](https://github.com/thetayloredman/semsql) so the links work correctly.
+> Otherwise, the below links will **not** work!
+
 <!-- we used to use : as the separator, but GH doesn't like it. -->
 
 -   [`CREATE`](#query>CREATE)
