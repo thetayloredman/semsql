@@ -12,17 +12,19 @@ db.CREATE.TABLE('foo')(['COL1', 'TEXT', 'NOT NULL']);
 
 ## All Supported Queries
 
--   [`CREATE`](#query:CREATE)
-    -   [`TABLE`](#query:CREATE:TABLE) (implemented in v0.1.0)
--   [`INSERT`](#query:INSERT)
-    -   [`INTO`](#query:INSERT:INTO) (implemented in v0.1.0)
--   [`SELECT ... FROM`](#query:SELECT_FROM) (implemented in v0.1.0)
--   [`DROP`](#query:DROP)
+<!-- we used to use : as the separator, but GH doesn't like it. -->
+
+-   [`CREATE`](#query>CREATE)
+    -   [`TABLE`](#query>CREATE>TABLE) (implemented in v0.1.0)
+-   [`INSERT`](#query>INSERT)
+    -   [`INTO`](#query>INSERT>INTO) (implemented in v0.1.0)
+-   [`SELECT ... FROM`](#query>SELECT_FROM) (implemented in v0.1.0)
+-   [`DROP`](#query>DROP)
     -   [`TABLE`](#query>DROP>TABLE) (implemented in v0.1.0)
 
 ## Queries
 
-<a name="query:CREATE">
+<a name="query>CREATE">
 
 ### CREATE
 
@@ -30,7 +32,7 @@ Used to _create_ something.
 
 Accessed by `db.CREATE`.
 
-<a name="query:CREATE:TABLE">
+<a name="query>CREATE>TABLE">
 
 #### TABLE
 
@@ -55,7 +57,7 @@ db.CREATE.TABLE('Users')(
 );
 ```
 
-<a name="query:INSERT">
+<a name="query>INSERT">
 
 ### INSERT
 
@@ -63,7 +65,7 @@ Used to add data to the database.
 
 Accessed by `db.INSERT`.
 
-<a name="query:INSERT:INTO">
+<a name="query>INSERT>INTO">
 
 #### INTO
 
@@ -81,7 +83,7 @@ Example:
 db.INSERT.INTO('Users').VALUES(1, 'John', 'Doe', 'JohnDoe', 50, "i'm john and i do things");
 ```
 
-<a name="query:SELECT_FROM">
+<a name="query>SELECT_FROM">
 
 ### SELECT ... FROM
 
@@ -105,7 +107,7 @@ db.SELECT('id').FROM('Users'); // => [ { id: 1 } ]
 db.SELECT('id').FROM('Users', { WHERE: [['id', '<=', 1]] }); // => [ { id: 1 } ]
 ```
 
-<a name="query:DROP">
+<a name="query>DROP">
 
 ### DROP
 
@@ -113,7 +115,7 @@ Used to delete a table, etc.
 
 Accessed by `db.DROP`.
 
-<a name="query:DROP:TABLE">
+<a name="query>DROP>TABLE">
 
 #### TABLE
 
