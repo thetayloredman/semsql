@@ -10,7 +10,10 @@
         "prettier": "prettier . -w",
         "test": "yarn build; yarn lint; jest"
     },
-    "repository": "https://github.com/thetayloredman/semsql",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/thetayloredman/semsql"
+    },
     "author": "BadBoyHaloCat",
     "license": "GPL-3.0-or-later",
     "dependencies": {
