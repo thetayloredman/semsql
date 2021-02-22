@@ -374,10 +374,13 @@ describe('DROP', () => {
     });
 });
 
-describe('BEGIN and BEGIN TRANSACTION', () => {
+describe('BEGIN TRANSACTION', () => {
     describe('they exist', () => {
         it('BEGIN', () => {
             expect('BEGIN' in db).toBe(true);
+        });
+        it('BEGIN TRAN', () => {
+            expect('TRAN' in db.BEGIN).toBe(true);
         });
         it('BEGIN TRANSACTION', () => {
             expect('TRANSACTION' in db.BEGIN).toBe(true);
@@ -397,6 +400,17 @@ describe('BEGIN and BEGIN TRANSACTION', () => {
 });
 
 describe('COMMIT', () => {
+    describe('they exist', () => {
+        it('COMMIT', () => {
+            expect('COMMIT' in db).toBe(true);
+        });
+        it('COMMIT TRAN', () => {
+            expect('TRAN' in db.COMMIT).toBe(true);
+        });
+        it('COMMIT TRANSACTION', () => {
+            expect('TRANSACTION' in db.COMMIT).toBe(true);
+        });
+    });
     it('prep', () => {
         db.CREATE.TABLE('COMMIT')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
         db.BEGIN.TRANSACTION();
@@ -409,6 +423,17 @@ describe('COMMIT', () => {
 });
 
 describe('ROLLBACK', () => {
+    describe('they exist', () => {
+        it('ROLLBACK', () => {
+            expect('ROLLBACK' in db).toBe(true);
+        });
+        it('ROLLBACK TRAN', () => {
+            expect('TRAN' in db.ROLLBACK).toBe(true);
+        });
+        it('ROLLBACK TRANSACTION', () => {
+            expect('TRANSACTION' in db.ROLLBACK).toBe(true);
+        });
+    });
     it('prep', () => {
         db.CREATE.TABLE('ROLLBACK')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
         db.BEGIN.TRANSACTION();

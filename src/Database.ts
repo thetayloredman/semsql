@@ -43,6 +43,19 @@ interface DROPStatement {
 interface BEGINStatement {
     (): void;
     TRANSACTION: () => void;
+    TRAN: () => void;
+}
+
+interface COMMITStatement {
+    (): void;
+    TRANSACTION: () => void;
+    TRAN: () => void;
+}
+
+interface ROLLBACKStatement {
+    (): void;
+    TRANSACTION: () => void;
+    TRAN: () => void;
 }
 
 export default class Database {
@@ -114,6 +127,31 @@ export default class Database {
         this.BEGIN.TRANSACTION = () => {
             this.db.exec('BEGIN TRANSACTION;');
         };
+        this.BEGIN.TRAN = () => {
+            this.db.exec('BEGIN TRANSACTION;');
+        };
+        // TODO: fix ts error
+        // @ts-ignore
+        this.COMMIT = () => {
+            this.db.exec('COMMIT;');
+        };
+        this.COMMIT.TRANSACTION = () => {
+            this.db.exec('COMMIT;');
+        };
+        this.COMMIT.TRAN = () => {
+            this.db.exec('COMMIT;');
+        };
+        // TODO: fix ts error
+        // @ts-ignore
+        this.ROLLBACK = () => {
+            this.db.exec('ROLLBACK;');
+        };
+        this.ROLLBACK.TRANSACTION = () => {
+            this.db.exec('ROLLBACK;');
+        };
+        this.ROLLBACK.TRAN = () => {
+            this.db.exec('ROLLBACK;');
+        };
     }
 
     public file: string;
@@ -180,12 +218,8 @@ export default class Database {
     }
     // BEGIN
     public BEGIN: BEGINStatement;
-    public ROLLBACK(): void {
-        this.db.exec('ROLLBACK;');
-    }
-    public COMMIT(): void {
-        this.db.exec('COMMIT;');
-    }
+    public ROLLBACK: ROLLBACKStatement;
+    public COMMIT: COMMITStatement;
 
     // critical function responsible for sanitizing sql strings.
     //
