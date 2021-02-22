@@ -25,8 +25,8 @@ db.CREATE.TABLE('foo')(['COL1', 'TEXT', 'NOT NULL']);
 -   [`SELECT ... FROM`](#query>SELECT_FROM) (implemented in v0.1.0)
 -   [`DROP`](#query>DROP)
     -   [`TABLE`](#query>DROP>TABLE) (implemented in v0.1.0)
--   [`BEGIN` and `BEGIN TRANSACTION`](#query>BEGIN_TRANSACTION) (implemented in v0.2.0-0)
--   [`REVERT`](#query>REVERT) (implemented in v0.2.0-0)
+-   [`BEGIN`](#query>BEGIN) (implemented in v0.2.0-0)
+-   [`ROLLBACK`](#query>ROLLBACK) (implemented in v0.2.0-0)
 -   [`COMMIT`](#query>COMMIT) (implemented in v0.2.0-0)
 
 ## Queries
@@ -141,26 +141,44 @@ Example:
 db.DROP.TABLE('Users'); // delete table 'Users'
 ```
 
-<a name="query>BEGIN_TRANSACTION">
+<a name="query>BEGIN">
 
-### BEGIN and BEGIN_TRANSACTION
+### BEGIN
 
-Called by `db.BEGIN()` or `db.BEGIN.TRANSACTION()`.
+Called by `db.BEGIN()`.
 
-Creates a "transaction" to be rolled back with [`REVERT`](#query>REVERT) or committed with [`COMMIT`](#query>COMMIT)
+All forms:
 
-<a name="query>REVERT">
+-   `db.BEGIN()`
+-   `db.BEGIN.TRANS()`
+-   `db.BEGIN.TRANSACTION()`
 
-### REVERT
+Creates a "transaction" to be rolled back with [`ROLLBACK`](#query>ROLLBACK) or committed with [`COMMIT`](#query>COMMIT)
 
-Called by `db.REVERT()`.
+<a name="query>ROLLBACK">
 
-Reverts a transaction.
+### ROLLBACK
+
+Called by `db.ROLLBACK()`.
+
+All forms:
+
+-   `db.ROLLBACK()`
+-   `db.ROLLBACK.TRANS()`
+-   `db.ROLLBACK.TRANSACTION()`
+
+Rolls back a transaction.
 
 <a name="query>COMMIT">
 
 ### COMMIT
 
 Called by `db.COMMIT()`.
+
+All forms:
+
+-   `db.COMMIT()`
+-   `db.COMMIT.TRANS()`
+-   `db.COMMIT.TRANSACTION()`
 
 Commits a transaction.
