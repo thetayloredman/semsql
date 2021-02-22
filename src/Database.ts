@@ -180,8 +180,8 @@ export default class Database {
     }
     // BEGIN
     public BEGIN: BEGINStatement;
-    public REVERT(): void {
-        this.db.exec('REVERT;');
+    public ROLLBACK(): void {
+        this.db.exec('ROLLBACK;');
     }
     public COMMIT(): void {
         this.db.exec('COMMIT;');

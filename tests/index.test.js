@@ -374,4 +374,48 @@ describe('DROP', () => {
     });
 });
 
-// TODO: tests for BEGIN/BEGIN TRANSACTION, REVERT, and COMMIT
+describe('BEGIN and BEGIN TRANSACTION', () => {
+    describe('they exist', () => {
+        it('BEGIN', () => {
+            expect('BEGIN' in db).toBe(true);
+        });
+        it('BEGIN TRANSACTION', () => {
+            expect('TRANSACTION' in db.BEGIN).toBe(true);
+        });
+    });
+    it('works', () => {
+        db.BEGIN.TRANSACTION();
+    });
+    it('errors when there are more than 1 transaction', () => {
+        expect(() => {
+            db.BEGIN.TRANSACTION();
+        }).toThrow();
+    });
+    it('wrap up', () => {
+        db.REVERT();
+    });
+});
+
+describe('COMMIT', () => {
+    it('prep', () => {
+        db.CREATE.TABLE('COMMIT')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
+        db.BEGIN.TRANSACTION();
+        db.INSERT.INTO('COMMIT').VALUES([1, 'foo']);
+    });
+    it('works', () => {
+        db.COMMIT();
+        expect(db.SELECT('*').FROM('COMMIT')).toEqual([{ id: 1, data: 'foo' }]);
+    });
+});
+
+describe('ROLLBACK', () => {
+    it('prep', () => {
+        db.CREATE.TABLE('ROLLBACK')(['id', 'INT', 'PRIMARY KEY'], ['data', 'TEXT', 'NOT NULL']);
+        db.BEGIN.TRANSACTION();
+        db.INSERT.INTO('ROLLBACK').VALUES([1, 'foo']);
+    });
+    it('works', () => {
+        db.ROLLBACK();
+        expect(db.SELECT('*').FROM('ROLLBACK')).toEqual([]);
+    });
+});
