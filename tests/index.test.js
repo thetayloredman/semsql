@@ -392,7 +392,7 @@ describe('BEGIN and BEGIN TRANSACTION', () => {
         }).toThrow();
     });
     it('wrap up', () => {
-        db.REVERT();
+        db.ROLLBACK();
     });
 });
 
