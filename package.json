@@ -1,6 +1,6 @@
 {
     "name": "semsql",
-    "version": "0.2.0-1",
+    "version": "0.2.0-2",
     "description": "A semantic SQL syntax for JavaScript",
     "main": "dist/index.js",
     "scripts": {
